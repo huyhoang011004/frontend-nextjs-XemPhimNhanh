@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
+import { apiClient } from '@/lib/api-client';
 import Hls from 'hls.js';
 
 interface ServerLink {
@@ -20,6 +21,20 @@ export function VideoPlayer({ servers, movieId, episodeSlug }: Props) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [currentServerIndex, setCurrentServerIndex] = useState(0);
   const [isLightOff, setIsLightOff] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  useEffect(() => {
+    // Analytics: Trigger View khi load Player
+    const triggerView = async () => {
+      try {
+        await apiClient.post('/analytics/view', {
+          movieId,
+          episodeSlug,
+        });
+      } catch (e) {}
+    };
+    triggerView();
+  }, [movieId, episodeSlug]);
   const lastSyncTime = useRef(0);
   
   // Tạm mock store và api client cho logic (đáng lẽ import từ lib)
