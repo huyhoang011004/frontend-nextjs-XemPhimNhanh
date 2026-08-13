@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { NotificationBell } from "@/components/shared/notification-bell";
+import Link from 'next/link';
 import "./globals.css";
 
 const geistSans = Geist({
@@ -23,7 +25,22 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col bg-black text-white">
+        <header className="w-full bg-gray-950 border-b border-gray-900 sticky top-0 z-50">
+          <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+            <Link href="/" className="text-xl font-bold text-blue-500">PhimNhanh</Link>
+            <div className="flex gap-4 items-center">
+              <Link href="/danh-sach/phim-le" className="text-sm font-medium text-gray-300 hover:text-white transition">Phim Lẻ</Link>
+              <Link href="/danh-sach/phim-bo" className="text-sm font-medium text-gray-300 hover:text-white transition">Phim Bộ</Link>
+              <NotificationBell />
+              <Link href="/profile" className="ml-2 w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center text-sm font-bold border border-gray-700 hover:border-gray-500 transition">U</Link>
+            </div>
+          </div>
+        </header>
+        <main className="flex-1">
+          {children}
+        </main>
+      </body>
     </html>
   );
 }
