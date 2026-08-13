@@ -12,12 +12,19 @@ interface ServerLink {
 
 interface Props {
   servers: ServerLink[];
+  movieId?: string;
+  episodeSlug?: string;
 }
 
-export function VideoPlayer({ servers }: Props) {
+export function VideoPlayer({ servers, movieId, episodeSlug }: Props) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [currentServerIndex, setCurrentServerIndex] = useState(0);
   const [isLightOff, setIsLightOff] = useState(false);
+  const lastSyncTime = useRef(0);
+  
+  // Tạm mock store và api client cho logic (đáng lẽ import từ lib)
+  // import { useAuthStore } from '@/store/use-auth-store';
+  // import { apiClient } from '@/lib/api-client';
 
   const activeServer = servers[currentServerIndex] || servers[0];
 
@@ -73,6 +80,23 @@ export function VideoPlayer({ servers }: Props) {
             className="w-full h-full" 
             controls 
             autoPlay 
+            onTimeUpdate={(e) => {
+              const video = e.target as HTMLVideoElement;
+              const currentTime = video.currentTime;
+              
+              // Debounce 10s
+              if (currentTime - lastSyncTime.current > 10 && movieId && episodeSlug) {
+                lastSyncTime.current = currentTime;
+                
+                // Gọi API lưu tiến độ ngầm (Fire and forget)
+                // if (user) {
+                //   apiClient.post('/user-experience/history', { movieId, episodeSlug, durationPlayed: currentTime, totalDuration: video.duration }).catch(e=>e);
+                // } else {
+                //   localStorage.setItem(`history_${movieId}`, JSON.stringify({ episodeSlug, duration: currentTime, totalDuration: video.duration }));
+                // }
+                console.log('Đã lưu tiến độ xem phim (Mock Sync):', currentTime, 'giây');
+              }
+            }}
           />
         )}
       </div>

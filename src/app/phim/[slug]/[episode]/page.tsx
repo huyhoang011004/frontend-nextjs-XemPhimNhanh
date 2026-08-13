@@ -58,7 +58,11 @@ export default async function WatchPage({ params }: Props) {
           <span className="text-white">{mockEpisode.name}</span>
         </div>
 
-        <VideoPlayer servers={mockEpisode.serverData} />
+        <VideoPlayer 
+          servers={mockEpisode.serverData} 
+          movieId="mock-movie-id-123" 
+          episodeSlug={mockEpisode.slug} 
+        />
       </div>
     </div>
   );
