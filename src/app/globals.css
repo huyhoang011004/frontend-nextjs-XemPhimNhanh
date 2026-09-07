@@ -1,11 +1,60 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: #090d16;
-  --foreground: #ffffff;
-  --card: #111827;
-  --card-foreground: #ffffff;
-  --border: #1f2937;
+  --background: #ffffff;
+  --foreground: #0f0f0f;
+  --card: #f8f8f8;
+  --card-foreground: #0f0f0f;
+  --popover: #ffffff;
+  --popover-foreground: #0f0f0f;
+  --primary: #0f0f0f;
+  --primary-foreground: #f1f1f1;
+  --secondary: #f2f2f2;
+  --secondary-foreground: #0f0f0f;
+  --muted: #f2f2f2;
+  --muted-foreground: #606060;
+  --accent: #f2f2f2;
+  --accent-foreground: #0f0f0f;
+  --destructive: #ff0000;
+  --destructive-foreground: #ffffff;
+  --border: #e5e5e5;
+  --input: #e5e5e5;
+  --ring: #3ea6ff;
+  --yt-red: #ff0000;
+  --yt-blue: #3ea6ff;
+  --yt-surface: #f8f8f8;
+  --yt-hover: #e5e5e5;
+  --radius: 0.5rem;
+}
+
+.dark {
+  --background: #0f0f0f;
+  --foreground: #f1f1f1;
+  --card: #212121;
+  --card-foreground: #f1f1f1;
+  --popover: #212121;
+  --popover-foreground: #f1f1f1;
+  --primary: #f1f1f1;
+  --primary-foreground: #0f0f0f;
+  --secondary: #383838;
+  --secondary-foreground: #f1f1f1;
+  --muted: #383838;
+  --muted-foreground: #aaaaaa;
+  --accent: #383838;
+  --accent-foreground: #f1f1f1;
+  --destructive: #ff0000;
+  --destructive-foreground: #ffffff;
+  --border: #272727;
+  --input: #272727;
+  --ring: #3ea6ff;
+  --yt-red: #ff0000;
+  --yt-blue: #3ea6ff;
+  --yt-surface: #212121;
+  --yt-hover: #383838;
 }
 
 @theme inline {
@@ -13,14 +62,57 @@
   --color-foreground: var(--foreground);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-yt-red: var(--yt-red);
+  --color-yt-blue: var(--yt-blue);
+  --color-yt-surface: var(--yt-surface);
+  --color-yt-hover: var(--yt-hover);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-body {
-  background-color: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
-  color-scheme: dark;
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
+}
+
+/* Tùy chỉnh thanh cuộn theo phong cách YouTube */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #717171;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #a0a0a0;
 }

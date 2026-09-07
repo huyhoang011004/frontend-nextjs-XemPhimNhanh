@@ -1,68 +1,67 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { apiClient } from '@/lib/api-client';
 import { useAuthStore } from '@/store/use-auth-store';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 export function NotificationBell() {
   const { user } = useAuthStore();
-  const [unreadCount, setUnreadCount] = useState(0);
-  const [notifications, setNotifications] = useState<any[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    if (user) {
-      fetchUnreadCount();
-      const interval = setInterval(fetchUnreadCount, 60000); 
-      return () => clearInterval(interval);
-    }
-  }, [user]);
-
-  const fetchUnreadCount = async () => {
-    try {
+  const { data: unreadCount = 0 } = useQuery({
+    queryKey: ['notifications', 'unread-count'],
+    queryFn: async () => {
       const res = await apiClient.get('/notifications/unread-count');
-      if (res.data.success) {
-        setUnreadCount(res.data.count);
-      }
-    } catch (e) {}
-  };
+      return res.data.success ? res.data.count : 0;
+    },
+    enabled: !!user,
+    refetchInterval: 60000,
+  });
 
-  const fetchNotifications = async () => {
-    try {
+  const { data: notifications = [] } = useQuery({
+    queryKey: ['notifications', 'list'],
+    queryFn: async () => {
       const res = await apiClient.get('/notifications');
-      if (res.data.success) {
-        setNotifications(res.data.data);
-      }
-    } catch (e) {}
-  };
+      return res.data.success ? res.data.data : [];
+    },
+    enabled: !!user && isOpen,
+  });
 
-  const handleToggle = () => {
-    if (!isOpen) {
-      fetchNotifications();
-    }
-    setIsOpen(!isOpen);
-  };
+  const handleToggle = () => setIsOpen(!isOpen);
 
-  const handleMarkAsRead = async (id: string, url: string) => {
-    try {
+  const markAsReadMutation = useMutation({
+    mutationFn: async (id: string) => {
       await apiClient.patch(`/notifications/${id}/read`);
-      setUnreadCount(prev => Math.max(0, prev - 1));
-      setIsOpen(false);
-      if (url) {
-        router.push(url);
-      }
-    } catch (e) {}
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['notifications'] });
+    },
+  });
+
+  const markAllAsReadMutation = useMutation({
+    mutationFn: async () => {
+      await apiClient.patch('/notifications/read-all');
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['notifications'] });
+    },
+  });
+
+  const handleMarkAsRead = (id: string, url: string) => {
+    markAsReadMutation.mutate(id);
+    setIsOpen(false);
+    if (url) {
+      router.push(url);
+    }
   };
 
-  const handleMarkAllAsRead = async () => {
-    try {
-      await apiClient.patch('/notifications/read-all');
-      setUnreadCount(0);
-      fetchNotifications();
-    } catch (e) {}
+  const handleMarkAllAsRead = () => {
+    markAllAsReadMutation.mutate();
   };
 
   if (!user) return null;
@@ -103,7 +102,7 @@ export function NotificationBell() {
                   Không có thông báo nào.
                 </div>
               ) : (
-                notifications.map(notif => (
+                notifications.map((notif: any) => (
                   <div 
                     key={notif._id}
                     onClick={() => handleMarkAsRead(notif._id, notif.targetUrl)}

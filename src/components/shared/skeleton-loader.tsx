@@ -1,7 +1,8 @@
 import React from 'react';
+import { Skeleton } from '@/components/ui/skeleton';
 
-export function SkeletonLoader() {
+export function SkeletonLoader({ className }: { className?: string }) {
   return (
-    <div className="w-full h-64 bg-gray-800 animate-pulse rounded-lg border border-border"></div>
+    <Skeleton className={`w-full h-64 rounded-lg ${className || ''}`} />
   );
 }
